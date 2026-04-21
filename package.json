@@ -1,0 +1,20 @@
+{
+  "name": "tauri-todo-course",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri:dev": "cargo tauri dev",
+    "tauri:build": "cargo tauri build"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.8.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^7.1.0"
+  }
+}
