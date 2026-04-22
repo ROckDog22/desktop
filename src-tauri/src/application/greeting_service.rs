@@ -20,7 +20,7 @@ impl GreetingService {
         BootstrapSummary {
             product_name: product_name(),
             greeting: format!(
-                "你好，{}。这条问候来自 Rust Core，而不是前端假数据。",
+                "你好，{}。这条问候来自 Fengsheng Wang ，而不是前端假数据。",
                 learner.display_name()
             ),
             process_model:

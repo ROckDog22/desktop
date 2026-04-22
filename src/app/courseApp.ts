@@ -1,71 +1,184 @@
-import { loadBootstrap, type BootstrapPayload } from "./tauriClient";
+import {
+  addTodo,
+  deleteTodo,
+  getTodoBoard,
+  toggleTodo,
+  type TodoBoard
+} from "./tauriClient";
 import { renderDashboard } from "../ui/renderDashboard";
 
 type State = {
-  currentName: string;
-  payload: BootstrapPayload | null;
+  board: TodoBoard | null;
+  draftTitle: string;
+  errorMessage: string | null;
   isLoading: boolean;
+  isSubmitting: boolean;
 };
 
 const state: State = {
-  currentName: "架构师",
-  payload: null,
-  isLoading: true
+  board: null,
+  draftTitle: "",
+  errorMessage: null,
+  isLoading: true,
+  isSubmitting: false
 };
 
 export async function startCourseApp(root: HTMLDivElement): Promise<void> {
-  await refresh(root, state.currentName);
+  bind(root);
+  await refresh(root);
 }
 
-async function refresh(root: HTMLDivElement, name: string): Promise<void> {
-  state.currentName = name.trim() || "架构师";
+async function refresh(root: HTMLDivElement): Promise<void> {
   state.isLoading = true;
+  state.errorMessage = null;
   paint(root);
 
   try {
-    state.payload = await loadBootstrap(state.currentName);
+    state.board = await getTodoBoard();
   } catch (error) {
-    state.payload = {
+    state.errorMessage = String(error);
+    state.board = {
       productName: "Tauri Todo Course",
-      greeting: "Rust Core 暂时不可用，请先检查 Tauri 运行环境。",
-      processModel: `错误信息：${String(error)}`,
-      coreBoundary: "Lesson 01 先保证边界清晰，再继续加功能。",
-      architectureRules: ["Command 薄", "Service 厚", "Domain 不依赖 Tauri"],
-      nextLessons: ["接入 Todo 用例", "引入 Repository", "加入本地持久化"]
+      lessonTitle: "Lesson 02 · Todo 用例与 Repository",
+      lessonGoal: "Rust Core 暂时不可用，请先检查 Tauri 运行环境。",
+      architectureRules: ["Command 薄", "Service 厚", "Repository 可替换"],
+      commandMap: ["get_todo_board", "add_todo", "toggle_todo", "delete_todo"],
+      totalCount: 0,
+      completedCount: 0,
+      remainingCount: 0,
+      tasks: []
     };
   } finally {
     state.isLoading = false;
     paint(root);
-    bind(root);
+  }
+}
+
+async function createTask(root: HTMLDivElement, title: string): Promise<void> {
+  state.isSubmitting = true;
+  state.errorMessage = null;
+  paint(root);
+
+  try {
+    state.board = await addTodo(title);
+    state.draftTitle = "";
+  } catch (error) {
+    state.errorMessage = String(error);
+  } finally {
+    state.isSubmitting = false;
+    paint(root);
+  }
+}
+
+async function toggleTask(root: HTMLDivElement, id: number): Promise<void> {
+  state.isSubmitting = true;
+  state.errorMessage = null;
+  paint(root);
+
+  try {
+    state.board = await toggleTodo(id);
+  } catch (error) {
+    state.errorMessage = String(error);
+  } finally {
+    state.isSubmitting = false;
+    paint(root);
+  }
+}
+
+async function removeTask(root: HTMLDivElement, id: number): Promise<void> {
+  state.isSubmitting = true;
+  state.errorMessage = null;
+  paint(root);
+
+  try {
+    state.board = await deleteTodo(id);
+  } catch (error) {
+    state.errorMessage = String(error);
+  } finally {
+    state.isSubmitting = false;
+    paint(root);
   }
 }
 
 function paint(root: HTMLDivElement): void {
   root.innerHTML = renderDashboard(
-    state.payload ?? {
+    state.board ?? {
       productName: "Tauri Todo Course",
-      greeting: "正在从 Rust Core 获取启动信息...",
-      processModel: "WebView 负责界面，Rust Core 负责系统能力。",
-      coreBoundary: "Command 是边界，不是业务中心。",
+      lessonTitle: "Lesson 02 · Todo 用例与 Repository",
+      lessonGoal: "正在从 Rust Core 拉取当前任务面板...",
       architectureRules: [],
-      nextLessons: []
+      commandMap: [],
+      totalCount: 0,
+      completedCount: 0,
+      remainingCount: 0,
+      tasks: []
     },
-    state.currentName,
-    state.isLoading
+    state.draftTitle,
+    state.isLoading,
+    state.isSubmitting,
+    state.errorMessage
   );
 }
 
 function bind(root: HTMLDivElement): void {
-  const form = root.querySelector<HTMLFormElement>('[data-role="welcome-form"]');
+  root.addEventListener("input", (event) => {
+    const target = event.target;
 
-  if (!form) {
-    return;
-  }
+    if (!(target instanceof HTMLInputElement)) {
+      return;
+    }
 
-  form.addEventListener("submit", async (event) => {
+    if (target.dataset.role === "task-input") {
+      state.draftTitle = target.value;
+    }
+  });
+
+  root.addEventListener("submit", async (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) {
+      return;
+    }
+
+    if (form.dataset.role !== "todo-form") {
+      return;
+    }
+
     event.preventDefault();
+    if (state.isSubmitting) {
+      return;
+    }
+
     const data = new FormData(form);
-    const name = String(data.get("name") ?? "");
-    await refresh(root, name);
+    const title = String(data.get("title") ?? "");
+    await createTask(root, title);
+  });
+
+  root.addEventListener("click", async (event) => {
+    const target = event.target;
+
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    const actionElement = target.closest<HTMLElement>("[data-action]");
+    if (!actionElement || state.isSubmitting) {
+      return;
+    }
+
+    const { action, taskId } = actionElement.dataset;
+    const id = Number(taskId);
+
+    if (!Number.isFinite(id)) {
+      return;
+    }
+
+    if (action === "toggle") {
+      await toggleTask(root, id);
+      return;
+    }
+
+    if (action === "delete") {
+      await removeTask(root, id);
+    }
   });
 }

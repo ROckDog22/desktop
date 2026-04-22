@@ -22,6 +22,14 @@ Todo 只是一个最小载体，它足够简单，但能覆盖全部关键能力
 4. Lesson 04: 状态管理、错误建模、窗口体验
 5. Lesson 05: Capability、插件、打包与演进策略
 
+## 当前课程进度
+
+当前代码已经进入 Lesson 02：
+
+- 前端通过 `invoke` 调用 Todo 相关 command
+- Rust Core 中已经有 `Task`、`TodoService`、`TodoRepository`
+- 当前仓储实现为内存版，下一课替换为 JSON 持久化
+
 ## 当前骨架
 
 前端：
@@ -35,6 +43,7 @@ Rust Core：
 - `src-tauri/src/application`: 用例与应用服务
 - `src-tauri/src/domain`: 领域模型
 - `src-tauri/src/infrastructure`: 技术实现细节
+- `src-tauri/src/state.rs`: Tauri 全局状态装配
 
 ## 运行方式
 
@@ -43,8 +52,8 @@ npm install
 npm run tauri:dev
 ```
 
-## 这一课你应该建立的认知
+## Lesson 02 你应该建立的认知
 
-- Tauri 不是“Rust 写界面”，而是 Rust Core 驱动系统能力，WebView 承载 UI
-- `command` 是边界适配层，不应该膨胀成业务中心
-- 一开始就把 `domain` 与 Tauri 解耦，后续扩展成本会低很多
+- 用例是系统的稳定中心，存储和界面都应该围绕它适配
+- `TodoRepository` 的价值不是“为了抽象而抽象”，而是为了隔离下一课会变化的持久化方式
+- 前端最小知道 command 名称和数据契约，不知道 Rust 内部如何实现
