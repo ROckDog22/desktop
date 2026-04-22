@@ -24,11 +24,11 @@ Todo 只是一个最小载体，它足够简单，但能覆盖全部关键能力
 
 ## 当前课程进度
 
-当前代码已经进入 Lesson 02：
+当前代码已经进入 Lesson 03：
 
-- 前端通过 `invoke` 调用 Todo 相关 command
-- Rust Core 中已经有 `Task`、`TodoService`、`TodoRepository`
-- 当前仓储实现为内存版，下一课替换为 JSON 持久化
+- Tauri 在 `setup` 阶段解析应用数据目录
+- `JsonTodoRepository` 负责 JSON 文件的加载与写回
+- 第二课的 command 契约保持不变，只替换了具体存储实现
 
 ## 当前骨架
 
@@ -52,8 +52,8 @@ npm install
 npm run tauri:dev
 ```
 
-## Lesson 02 你应该建立的认知
+## Lesson 03 你应该建立的认知
 
-- 用例是系统的稳定中心，存储和界面都应该围绕它适配
-- `TodoRepository` 的价值不是“为了抽象而抽象”，而是为了隔离下一课会变化的持久化方式
-- 前端最小知道 command 名称和数据契约，不知道 Rust 内部如何实现
+- 真正发生变化的是基础设施层，而不是 command 契约和用例层
+- Tauri 的路径解析属于框架装配问题，适合放在 `setup` 阶段处理
+- 只要 Repository 边界设计得对，持久化从内存切到 JSON 不需要推翻上层代码

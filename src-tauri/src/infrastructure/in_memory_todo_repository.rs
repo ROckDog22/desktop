@@ -47,12 +47,12 @@ impl TodoRepository for InMemoryTodoRepository {
             .cloned()
     }
 
-    fn create(&self, title: TaskTitle) -> Task {
+    fn create(&self, title: TaskTitle) -> Result<Task, TodoServiceError> {
         let mut store = self.inner.lock().expect("todo repository lock poisoned");
         let task = Task::new(store.next_id, title);
         store.next_id += 1;
         store.tasks.push(task.clone());
-        task
+        Ok(task)
     }
 
     fn save(&self, task: Task) -> Result<(), TodoServiceError> {
@@ -95,8 +95,12 @@ mod tests {
     #[test]
     fn creates_tasks_with_incrementing_ids() {
         let repository = InMemoryTodoRepository::seeded(["a"]);
-        let first = repository.create(TaskTitle::new("b").expect("valid title"));
-        let second = repository.create(TaskTitle::new("c").expect("valid title"));
+        let first = repository
+            .create(TaskTitle::new("b").expect("valid title"))
+            .expect("task should be created");
+        let second = repository
+            .create(TaskTitle::new("c").expect("valid title"))
+            .expect("task should be created");
 
         assert_eq!(first.id(), 2);
         assert_eq!(second.id(), 3);

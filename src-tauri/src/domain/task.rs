@@ -14,6 +14,14 @@ impl Task {
         }
     }
 
+    pub fn restore(id: u64, title: TaskTitle, completed: bool) -> Self {
+        Self {
+            id,
+            title,
+            completed,
+        }
+    }
+
     pub fn id(&self) -> u64 {
         self.id
     }

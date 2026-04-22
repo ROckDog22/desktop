@@ -39,8 +39,10 @@ async function refresh(root: HTMLDivElement): Promise<void> {
     state.errorMessage = String(error);
     state.board = {
       productName: "Tauri Todo Course",
-      lessonTitle: "Lesson 02 · Todo 用例与 Repository",
+      lessonTitle: "Lesson 03 · JSON 持久化与封闭修改",
       lessonGoal: "Rust Core 暂时不可用，请先检查 Tauri 运行环境。",
+      persistenceSummary: "当前未能连接 Rust Core，因此无法读取 JSON 持久化状态。",
+      dataFilePath: "Unavailable",
       architectureRules: ["Command 薄", "Service 厚", "Repository 可替换"],
       commandMap: ["get_todo_board", "add_todo", "toggle_todo", "delete_todo"],
       totalCount: 0,
@@ -104,8 +106,10 @@ function paint(root: HTMLDivElement): void {
   root.innerHTML = renderDashboard(
     state.board ?? {
       productName: "Tauri Todo Course",
-      lessonTitle: "Lesson 02 · Todo 用例与 Repository",
+      lessonTitle: "Lesson 03 · JSON 持久化与封闭修改",
       lessonGoal: "正在从 Rust Core 拉取当前任务面板...",
+      persistenceSummary: "正在解析应用数据目录并加载 JSON 文件...",
+      dataFilePath: "Loading...",
       architectureRules: [],
       commandMap: [],
       totalCount: 0,

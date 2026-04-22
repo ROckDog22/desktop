@@ -25,7 +25,7 @@ function renderTasks(board: TodoBoard, isSubmitting: boolean): string {
   if (board.tasks.length === 0) {
     return `
       <li class="empty-state">
-        现在还是空列表。第 2 课的重点不是任务数量，而是把用例闭环和仓储边界跑通。
+        现在还是空列表。第 3 课的重点不是任务数量，而是验证 JSON 持久化替换没有破坏上层语义。
       </li>
     `;
   }
@@ -136,8 +136,15 @@ export function renderDashboard(
         </article>
 
         <article class="panel">
+          <p class="panel-tag">Persistence</p>
+          <h2>第三课只替换仓储，不推翻上层契约</h2>
+          <p class="panel-copy">${escapeHtml(board.persistenceSummary)}</p>
+          <p class="path-chip">${escapeHtml(board.dataFilePath)}</p>
+        </article>
+
+        <article class="panel">
           <p class="panel-tag">Command Contract</p>
-          <h2>第二课真正要掌握的是契约，而不是待办本身</h2>
+          <h2>命令名和返回结构继续保持稳定</h2>
           <ul class="chips">
             ${renderList(board.commandMap, "blue")}
           </ul>
@@ -155,10 +162,10 @@ export function renderDashboard(
 
         <article class="card">
           <p class="card-tag">Why Repository</p>
-          <h3>下一课只替换存储实现，不改用例语义</h3>
+          <h3>现在重启应用，任务仍然会从 JSON 文件恢复</h3>
           <p class="panel-copy">
-            现在仓储还是内存版，但 command、service、domain 已经不依赖具体存储方式。下一课接 JSON
-            持久化时，我们只替换 repository 实现，不推翻上层协议。
+            这就是第三课最重要的架构信号：Lesson 02 里定义好的 command、service、domain
+            语义没有推翻，只是把具体存储从内存改成了 JSON 文件。
           </p>
         </article>
       </section>

@@ -10,6 +10,8 @@ export type TodoBoard = {
   productName: string;
   lessonTitle: string;
   lessonGoal: string;
+  persistenceSummary: string;
+  dataFilePath: string;
   architectureRules: string[];
   commandMap: string[];
   totalCount: number;
