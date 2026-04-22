@@ -1,4 +1,5 @@
 import {
+  type AppError,
   addTodo,
   deleteTodo,
   getTodoBoard,
@@ -10,7 +11,7 @@ import { renderDashboard } from "../ui/renderDashboard";
 type State = {
   board: TodoBoard | null;
   draftTitle: string;
-  errorMessage: string | null;
+  appError: AppError | null;
   isLoading: boolean;
   isSubmitting: boolean;
 };
@@ -18,7 +19,7 @@ type State = {
 const state: State = {
   board: null,
   draftTitle: "",
-  errorMessage: null,
+  appError: null,
   isLoading: true,
   isSubmitting: false
 };
@@ -30,20 +31,21 @@ export async function startCourseApp(root: HTMLDivElement): Promise<void> {
 
 async function refresh(root: HTMLDivElement): Promise<void> {
   state.isLoading = true;
-  state.errorMessage = null;
+  state.appError = null;
   paint(root);
 
   try {
     state.board = await getTodoBoard();
   } catch (error) {
-    state.errorMessage = String(error);
+    state.appError = normalizeUiError(error);
     state.board = {
       productName: "Tauri Todo Course",
-      lessonTitle: "Lesson 03 · JSON 持久化与封闭修改",
+      lessonTitle: "Lesson 04 · 错误建模与窗口状态",
       lessonGoal: "Rust Core 暂时不可用，请先检查 Tauri 运行环境。",
       persistenceSummary: "当前未能连接 Rust Core，因此无法读取 JSON 持久化状态。",
       dataFilePath: "Unavailable",
-      architectureRules: ["Command 薄", "Service 厚", "Repository 可替换"],
+      desktopExperienceSummary: "窗口状态插件尚未初始化。",
+      architectureRules: ["错误是协议的一部分", "Service 厚", "桌面能力在 setup 装配"],
       commandMap: ["get_todo_board", "add_todo", "toggle_todo", "delete_todo"],
       totalCount: 0,
       completedCount: 0,
@@ -58,14 +60,14 @@ async function refresh(root: HTMLDivElement): Promise<void> {
 
 async function createTask(root: HTMLDivElement, title: string): Promise<void> {
   state.isSubmitting = true;
-  state.errorMessage = null;
+  state.appError = null;
   paint(root);
 
   try {
     state.board = await addTodo(title);
     state.draftTitle = "";
   } catch (error) {
-    state.errorMessage = String(error);
+    state.appError = normalizeUiError(error);
   } finally {
     state.isSubmitting = false;
     paint(root);
@@ -74,13 +76,13 @@ async function createTask(root: HTMLDivElement, title: string): Promise<void> {
 
 async function toggleTask(root: HTMLDivElement, id: number): Promise<void> {
   state.isSubmitting = true;
-  state.errorMessage = null;
+  state.appError = null;
   paint(root);
 
   try {
     state.board = await toggleTodo(id);
   } catch (error) {
-    state.errorMessage = String(error);
+    state.appError = normalizeUiError(error);
   } finally {
     state.isSubmitting = false;
     paint(root);
@@ -89,13 +91,13 @@ async function toggleTask(root: HTMLDivElement, id: number): Promise<void> {
 
 async function removeTask(root: HTMLDivElement, id: number): Promise<void> {
   state.isSubmitting = true;
-  state.errorMessage = null;
+  state.appError = null;
   paint(root);
 
   try {
     state.board = await deleteTodo(id);
   } catch (error) {
-    state.errorMessage = String(error);
+    state.appError = normalizeUiError(error);
   } finally {
     state.isSubmitting = false;
     paint(root);
@@ -106,10 +108,11 @@ function paint(root: HTMLDivElement): void {
   root.innerHTML = renderDashboard(
     state.board ?? {
       productName: "Tauri Todo Course",
-      lessonTitle: "Lesson 03 · JSON 持久化与封闭修改",
+      lessonTitle: "Lesson 04 · 错误建模与窗口状态",
       lessonGoal: "正在从 Rust Core 拉取当前任务面板...",
       persistenceSummary: "正在解析应用数据目录并加载 JSON 文件...",
       dataFilePath: "Loading...",
+      desktopExperienceSummary: "正在初始化桌面插件并恢复窗口状态...",
       architectureRules: [],
       commandMap: [],
       totalCount: 0,
@@ -120,8 +123,30 @@ function paint(root: HTMLDivElement): void {
     state.draftTitle,
     state.isLoading,
     state.isSubmitting,
-    state.errorMessage
+    state.appError
   );
+}
+
+function normalizeUiError(error: unknown): AppError {
+  if (
+    error &&
+    typeof error === "object" &&
+    "code" in error &&
+    "message" in error &&
+    "operation" in error &&
+    "recoverable" in error &&
+    "suggestion" in error
+  ) {
+    return error as AppError;
+  }
+
+  return {
+    code: "UNKNOWN_ERROR",
+    message: String(error),
+    operation: "ui_fallback",
+    recoverable: true,
+    suggestion: "重试一次；如果问题持续存在，请检查本地运行环境。"
+  };
 }
 
 function bind(root: HTMLDivElement): void {

@@ -1,4 +1,4 @@
-import type { TodoBoard } from "../app/tauriClient";
+import type { AppError, TodoBoard } from "../app/tauriClient";
 
 function escapeHtml(value: string): string {
   return value
@@ -69,7 +69,7 @@ export function renderDashboard(
   draftTitle: string,
   isLoading: boolean,
   isSubmitting: boolean,
-  errorMessage: string | null
+  appError: AppError | null
 ): string {
   return `
     <main class="shell">
@@ -124,11 +124,7 @@ export function renderDashboard(
             </div>
           </form>
 
-          ${
-            errorMessage
-              ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>`
-              : ""
-          }
+          ${renderErrorBanner(appError)}
 
           <ul class="task-list">
             ${renderTasks(board, isSubmitting)}
@@ -143,8 +139,14 @@ export function renderDashboard(
         </article>
 
         <article class="panel">
+          <p class="panel-tag">Desktop Experience</p>
+          <h2>窗口尺寸与位置会跟随桌面生命周期恢复</h2>
+          <p class="panel-copy">${escapeHtml(board.desktopExperienceSummary)}</p>
+        </article>
+
+        <article class="panel">
           <p class="panel-tag">Command Contract</p>
-          <h2>命令名和返回结构继续保持稳定</h2>
+          <h2>命令名和主返回结构继续保持稳定</h2>
           <ul class="chips">
             ${renderList(board.commandMap, "blue")}
           </ul>
@@ -161,14 +163,34 @@ export function renderDashboard(
         </article>
 
         <article class="card">
-          <p class="card-tag">Why Repository</p>
-          <h3>现在重启应用，任务仍然会从 JSON 文件恢复</h3>
+          <p class="card-tag">Error Protocol</p>
+          <h3>错误不再是字符串碎片，而是前后端共享的边界协议</h3>
           <p class="panel-copy">
-            这就是第三课最重要的架构信号：Lesson 02 里定义好的 command、service、domain
-            语义没有推翻，只是把具体存储从内存改成了 JSON 文件。
+            这一课开始，前端接到的不是裸字符串，而是带 code、operation、suggestion
+            的结构化错误对象。这样 UI 可以给出更稳定、更可操作的反馈。
           </p>
         </article>
       </section>
     </main>
+  `;
+}
+
+function renderErrorBanner(appError: AppError | null): string {
+  if (!appError) {
+    return "";
+  }
+
+  return `
+    <div class="error-banner">
+      <div class="error-header">
+        <strong>${escapeHtml(appError.message)}</strong>
+        <span class="error-code">${escapeHtml(appError.code)}</span>
+      </div>
+      <p class="error-meta">Operation: ${escapeHtml(appError.operation)}</p>
+      <p class="error-meta">${escapeHtml(appError.suggestion)}</p>
+      <p class="error-meta">
+        ${appError.recoverable ? "这类错误通常可以恢复。" : "这类错误通常需要人工介入。"}
+      </p>
+    </div>
   `;
 }

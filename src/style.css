@@ -199,11 +199,31 @@ button {
 
 .error-banner {
   margin: 18px 0 0;
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: 14px 16px;
+  border-radius: 16px;
   background: #fff1ec;
   color: #aa4325;
   border: 1px solid rgba(170, 67, 37, 0.12);
+}
+
+.error-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.error-code {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(170, 67, 37, 0.08);
+  font-size: 0.78rem;
+  font-family: "SF Mono", "Menlo", "Monaco", monospace;
+}
+
+.error-meta {
+  margin: 8px 0 0;
+  font-size: 0.92rem;
 }
 
 .task-list {

@@ -3,5 +3,5 @@
   "identifier": "main-capability",
   "description": "Default capability for the main lesson window.",
   "windows": ["main"],
-  "permissions": ["core:default"]
+  "permissions": ["core:default", "window-state:default"]
 }

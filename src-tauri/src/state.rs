@@ -27,6 +27,7 @@ impl AppState {
                 repository,
                 "当前使用 JSON 文件仓储，应用重启后任务仍会保留。",
                 repository_path.display().to_string(),
+                "窗口尺寸与位置会在关闭时自动保存，并在下次启动时恢复。",
             ),
         })
     }

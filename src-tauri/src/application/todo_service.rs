@@ -9,6 +9,7 @@ pub struct TodoBoard {
     pub lesson_goal: String,
     pub persistence_summary: String,
     pub data_file_path: String,
+    pub desktop_experience_summary: String,
     pub architecture_rules: Vec<&'static str>,
     pub command_map: Vec<&'static str>,
     pub tasks: Vec<TodoItem>,
@@ -37,6 +38,7 @@ pub struct TodoService {
     repository: Arc<dyn TodoRepository>,
     persistence_summary: String,
     data_file_path: String,
+    desktop_experience_summary: String,
 }
 
 impl TodoService {
@@ -44,11 +46,13 @@ impl TodoService {
         repository: Arc<dyn TodoRepository>,
         persistence_summary: impl Into<String>,
         data_file_path: impl Into<String>,
+        desktop_experience_summary: impl Into<String>,
     ) -> Self {
         Self {
             repository,
             persistence_summary: persistence_summary.into(),
             data_file_path: data_file_path.into(),
+            desktop_experience_summary: desktop_experience_summary.into(),
         }
     }
 
@@ -95,16 +99,17 @@ impl TodoService {
 
         TodoBoard {
             product_name: "Tauri Todo Course".to_string(),
-            lesson_title: "Lesson 03 · JSON 持久化与封闭修改".to_string(),
+            lesson_title: "Lesson 04 · 错误建模与窗口状态".to_string(),
             lesson_goal:
-                "这一课不动 command 契约和用例语义，只把仓储从内存版替换成 JSON 文件版，让数据跨重启保留下来。"
+                "这一课补两件桌面应用该有的能力：结构化错误协议，以及窗口位置与尺寸的自动记忆。"
                     .to_string(),
             persistence_summary: self.persistence_summary.clone(),
             data_file_path: self.data_file_path.clone(),
+            desktop_experience_summary: self.desktop_experience_summary.clone(),
             architecture_rules: vec![
-                "Command 只负责输入输出协议",
+                "错误也是边界协议的一部分",
                 "Service 承载用例语义与规则编排",
-                "存储替换发生在 Repository 后面，不扩散到上层",
+                "桌面能力在 setup 阶段装配，不污染业务层",
             ],
             command_map: vec![
                 "get_todo_board -> 查询当前任务面板",
@@ -157,7 +162,7 @@ mod tests {
         TodoService::new(Arc::new(InMemoryTodoRepository::seeded([
             "拆出 domain 与 application",
             "把 command 保持为薄边界",
-        ])), "内存仓储，仅用于单元测试。", "/tmp/todo-course-test.json")
+        ])), "内存仓储，仅用于单元测试。", "/tmp/todo-course-test.json", "测试环境不接入窗口状态插件。")
     }
 
     #[test]

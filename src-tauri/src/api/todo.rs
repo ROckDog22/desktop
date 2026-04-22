@@ -1,7 +1,11 @@
 use serde::Serialize;
 use tauri::State;
 
-use crate::{application::todo_service::TodoBoard, state::AppState};
+use crate::{
+    api::error::ApiError,
+    application::todo_service::TodoBoard,
+    state::AppState,
+};
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -11,6 +15,7 @@ pub struct TodoBoardDto {
     lesson_goal: String,
     persistence_summary: String,
     data_file_path: String,
+    desktop_experience_summary: String,
     architecture_rules: Vec<&'static str>,
     command_map: Vec<&'static str>,
     total_count: usize,
@@ -28,35 +33,35 @@ pub struct TodoItemDto {
 }
 
 #[tauri::command]
-pub fn get_todo_board(state: State<'_, AppState>) -> TodoBoardDto {
-    TodoBoardDto::from(state.todo_service.get_board())
+pub fn get_todo_board(state: State<'_, AppState>) -> Result<TodoBoardDto, ApiError> {
+    Ok(TodoBoardDto::from(state.todo_service.get_board()))
 }
 
 #[tauri::command]
-pub fn add_todo(state: State<'_, AppState>, title: String) -> Result<TodoBoardDto, String> {
+pub fn add_todo(state: State<'_, AppState>, title: String) -> Result<TodoBoardDto, ApiError> {
     state
         .todo_service
         .add_task(&title)
         .map(TodoBoardDto::from)
-        .map_err(|error| error.to_string())
+        .map_err(|error| ApiError::from_todo_error("add_todo", error))
 }
 
 #[tauri::command]
-pub fn toggle_todo(state: State<'_, AppState>, id: u64) -> Result<TodoBoardDto, String> {
+pub fn toggle_todo(state: State<'_, AppState>, id: u64) -> Result<TodoBoardDto, ApiError> {
     state
         .todo_service
         .toggle_task(id)
         .map(TodoBoardDto::from)
-        .map_err(|error| error.to_string())
+        .map_err(|error| ApiError::from_todo_error("toggle_todo", error))
 }
 
 #[tauri::command]
-pub fn delete_todo(state: State<'_, AppState>, id: u64) -> Result<TodoBoardDto, String> {
+pub fn delete_todo(state: State<'_, AppState>, id: u64) -> Result<TodoBoardDto, ApiError> {
     state
         .todo_service
         .delete_task(id)
         .map(TodoBoardDto::from)
-        .map_err(|error| error.to_string())
+        .map_err(|error| ApiError::from_todo_error("delete_todo", error))
 }
 
 impl From<TodoBoard> for TodoBoardDto {
@@ -67,6 +72,7 @@ impl From<TodoBoard> for TodoBoardDto {
             lesson_goal: value.lesson_goal,
             persistence_summary: value.persistence_summary,
             data_file_path: value.data_file_path,
+            desktop_experience_summary: value.desktop_experience_summary,
             architecture_rules: value.architecture_rules,
             command_map: value.command_map,
             total_count: value.total_count,

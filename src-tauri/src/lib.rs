@@ -10,6 +10,10 @@ pub mod state;
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
+            #[cfg(desktop)]
+            app.handle()
+                .plugin(tauri_plugin_window_state::Builder::default().build())?;
+
             let app_state = state::AppState::new(app.path().app_data_dir()?)?;
             app.manage(app_state);
             Ok(())
