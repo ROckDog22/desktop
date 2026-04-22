@@ -42,16 +42,16 @@
 
 因为如果一开始就引入表单、列表、存储，你很容易把注意力放在业务流程上，反而错过 Tauri 真正关键的边界模型。
 
-第一课只做一条 `greet` command，是为了把最基础的“桌面架构骨架”先钉牢。
+第一课当时只做一条 `greet` command，是为了把最基础的“桌面架构骨架”先钉牢。到 Lesson 05，它已经作为演示期遗留被移除，这本身也是一次“收口权限面”的实践。
 
 ## 你应该读哪些文件
 
 - `package.json`: 前端开发与构建入口
 - `src/app/courseApp.ts`: 前端编排层
 - `src/ui/renderDashboard.ts`: 视图渲染层
-- `src-tauri/src/api/greeting.rs`: Tauri 边界
-- `src-tauri/src/application/greeting_service.rs`: 应用服务
-- `src-tauri/src/domain/learner.rs`: 领域对象
+- `src-tauri/src/api/todo.rs`: 当前仓库里最接近第一课边界职责的 Tauri command 层
+- `src-tauri/src/application/todo_service.rs`: 当前仓库里的应用服务
+- `src-tauri/src/domain/task.rs`: 当前仓库里的领域对象
 - `src-tauri/src/lib.rs`: 应用组装入口
 
 ## 通过标准

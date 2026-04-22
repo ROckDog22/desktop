@@ -24,11 +24,11 @@ Todo 只是一个最小载体，它足够简单，但能覆盖全部关键能力
 
 ## 当前课程进度
 
-当前代码已经进入 Lesson 04：
+当前代码已经进入 Lesson 05：
 
-- command 返回结构化错误对象，而不只是字符串
-- Tauri 在 `setup` 阶段装配 `window-state` 插件
-- 窗口尺寸和位置会在关闭后保存，并在下次启动恢复
+- 旧的演示命令已经从运行面和构建面移除
+- `build.rs` 显式白名单化了允许生成 ACL 的 Todo command
+- Capability 已按职责拆分，发布前可运行 `npm run release:check`
 
 ## 当前骨架
 
@@ -52,8 +52,15 @@ npm install
 npm run tauri:dev
 ```
 
-## Lesson 04 你应该建立的认知
+## 发布前检查
 
-- 错误不只是日志文本，它本身就是前后端共享的协议
-- 桌面插件接入应集中在 `setup` 阶段，而不是散进业务层
-- “像桌面应用”往往不是多写功能，而是把生命周期和恢复体验做对
+```bash
+npm run release:check
+npm run tauri:build:checked
+```
+
+## Lesson 05 你应该建立的认知
+
+- 最小授权不能只停留在口头上，必须落实到 Capability 和命令白名单
+- 发布边界应该有可重复执行的静态检查，而不是依赖记忆
+- 课程型项目收口到真实工程时，第一件事通常是删除历史演示能力，而不是继续叠加功能

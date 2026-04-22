@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "desktop-window-state",
+  "description": "Window state plugin capability for the main Todo window.",
+  "windows": ["main"],
+  "permissions": ["window-state:default"]
+}

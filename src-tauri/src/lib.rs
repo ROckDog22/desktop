@@ -19,7 +19,6 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            api::greeting::greet,
             api::todo::get_todo_board,
             api::todo::add_todo,
             api::todo::toggle_todo,

@@ -7,8 +7,10 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "release:check": "node scripts/release-check.mjs",
     "tauri:dev": "cargo tauri dev",
     "tauri:build": "cargo tauri build",
+    "tauri:build:checked": "npm run release:check && cargo tauri build",
     "tauri:build:dmg": "cargo tauri build --bundles dmg",
     "tauri:build:pkg": "node -e \"console.error('macOS pkg bundling is not supported by the installed Tauri CLI in this project. Use npm run tauri:build or npm run tauri:build:dmg instead.'); process.exit(1)\""
   },

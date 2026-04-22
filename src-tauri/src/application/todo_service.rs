@@ -10,6 +10,8 @@ pub struct TodoBoard {
     pub persistence_summary: String,
     pub data_file_path: String,
     pub desktop_experience_summary: String,
+    pub security_boundary_summary: String,
+    pub release_readiness_summary: String,
     pub architecture_rules: Vec<&'static str>,
     pub command_map: Vec<&'static str>,
     pub tasks: Vec<TodoItem>,
@@ -39,6 +41,8 @@ pub struct TodoService {
     persistence_summary: String,
     data_file_path: String,
     desktop_experience_summary: String,
+    security_boundary_summary: String,
+    release_readiness_summary: String,
 }
 
 impl TodoService {
@@ -47,12 +51,16 @@ impl TodoService {
         persistence_summary: impl Into<String>,
         data_file_path: impl Into<String>,
         desktop_experience_summary: impl Into<String>,
+        security_boundary_summary: impl Into<String>,
+        release_readiness_summary: impl Into<String>,
     ) -> Self {
         Self {
             repository,
             persistence_summary: persistence_summary.into(),
             data_file_path: data_file_path.into(),
             desktop_experience_summary: desktop_experience_summary.into(),
+            security_boundary_summary: security_boundary_summary.into(),
+            release_readiness_summary: release_readiness_summary.into(),
         }
     }
 
@@ -99,17 +107,19 @@ impl TodoService {
 
         TodoBoard {
             product_name: "Tauri Todo Course".to_string(),
-            lesson_title: "Lesson 04 · 错误建模与窗口状态".to_string(),
+            lesson_title: "Lesson 05 · Capability 与发布边界".to_string(),
             lesson_goal:
-                "这一课补两件桌面应用该有的能力：结构化错误协议，以及窗口位置与尺寸的自动记忆。"
+                "这一课把工程真正收口到可交付状态：显式 Capability、构建期 command 白名单，以及发布前检查。"
                     .to_string(),
             persistence_summary: self.persistence_summary.clone(),
             data_file_path: self.data_file_path.clone(),
             desktop_experience_summary: self.desktop_experience_summary.clone(),
+            security_boundary_summary: self.security_boundary_summary.clone(),
+            release_readiness_summary: self.release_readiness_summary.clone(),
             architecture_rules: vec![
-                "错误也是边界协议的一部分",
-                "Service 承载用例语义与规则编排",
-                "桌面能力在 setup 阶段装配，不污染业务层",
+                "最小授权要体现在 Capability 和命令白名单里",
+                "发布边界要有可重复执行的检查脚本",
+                "系统能力与业务语义继续保持分层",
             ],
             command_map: vec![
                 "get_todo_board -> 查询当前任务面板",
@@ -162,7 +172,7 @@ mod tests {
         TodoService::new(Arc::new(InMemoryTodoRepository::seeded([
             "拆出 domain 与 application",
             "把 command 保持为薄边界",
-        ])), "内存仓储，仅用于单元测试。", "/tmp/todo-course-test.json", "测试环境不接入窗口状态插件。")
+        ])), "内存仓储，仅用于单元测试。", "/tmp/todo-course-test.json", "测试环境不接入窗口状态插件。", "测试环境不需要 Capability 文件拆分。", "测试环境不执行发布前检查脚本。")
     }
 
     #[test]

@@ -21,6 +21,8 @@ export type TodoBoard = {
   persistenceSummary: string;
   dataFilePath: string;
   desktopExperienceSummary: string;
+  securityBoundarySummary: string;
+  releaseReadinessSummary: string;
   architectureRules: string[];
   commandMap: string[];
   totalCount: number;

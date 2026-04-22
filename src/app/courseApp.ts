@@ -40,12 +40,14 @@ async function refresh(root: HTMLDivElement): Promise<void> {
     state.appError = normalizeUiError(error);
     state.board = {
       productName: "Tauri Todo Course",
-      lessonTitle: "Lesson 04 · 错误建模与窗口状态",
+      lessonTitle: "Lesson 05 · Capability 与发布边界",
       lessonGoal: "Rust Core 暂时不可用，请先检查 Tauri 运行环境。",
       persistenceSummary: "当前未能连接 Rust Core，因此无法读取 JSON 持久化状态。",
       dataFilePath: "Unavailable",
       desktopExperienceSummary: "窗口状态插件尚未初始化。",
-      architectureRules: ["错误是协议的一部分", "Service 厚", "桌面能力在 setup 装配"],
+      securityBoundarySummary: "当前无法读取 Capability 配置。",
+      releaseReadinessSummary: "当前无法执行发布边界检查。",
+      architectureRules: ["最小授权", "显式 Capability", "发布前静态检查"],
       commandMap: ["get_todo_board", "add_todo", "toggle_todo", "delete_todo"],
       totalCount: 0,
       completedCount: 0,
@@ -108,11 +110,13 @@ function paint(root: HTMLDivElement): void {
   root.innerHTML = renderDashboard(
     state.board ?? {
       productName: "Tauri Todo Course",
-      lessonTitle: "Lesson 04 · 错误建模与窗口状态",
+      lessonTitle: "Lesson 05 · Capability 与发布边界",
       lessonGoal: "正在从 Rust Core 拉取当前任务面板...",
       persistenceSummary: "正在解析应用数据目录并加载 JSON 文件...",
       dataFilePath: "Loading...",
       desktopExperienceSummary: "正在初始化桌面插件并恢复窗口状态...",
+      securityBoundarySummary: "正在读取主窗口 Capability 配置...",
+      releaseReadinessSummary: "正在准备发布前检查信息...",
       architectureRules: [],
       commandMap: [],
       totalCount: 0,

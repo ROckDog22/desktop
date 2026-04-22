@@ -28,6 +28,8 @@ impl AppState {
                 "当前使用 JSON 文件仓储，应用重启后任务仍会保留。",
                 repository_path.display().to_string(),
                 "窗口尺寸与位置会在关闭时自动保存，并在下次启动时恢复。",
+                "主窗口只拿到显式列出的 Todo command 与 window-state 权限，不再保留演示期多余命令。",
+                "发布前可以运行 npm run release:check，静态检查版本、图标、Capability 和构建期命令白名单。",
             ),
         })
     }

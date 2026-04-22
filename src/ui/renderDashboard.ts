@@ -25,7 +25,7 @@ function renderTasks(board: TodoBoard, isSubmitting: boolean): string {
   if (board.tasks.length === 0) {
     return `
       <li class="empty-state">
-        现在还是空列表。第 3 课的重点不是任务数量，而是验证 JSON 持久化替换没有破坏上层语义。
+        现在还是空列表。第 5 课的重点不是功能数量，而是把权限面和发布边界真正收束起来。
       </li>
     `;
   }
@@ -133,7 +133,7 @@ export function renderDashboard(
 
         <article class="panel">
           <p class="panel-tag">Persistence</p>
-          <h2>第三课只替换仓储，不推翻上层契约</h2>
+          <h2>数据边界继续稳定存在，发布收口不影响它</h2>
           <p class="panel-copy">${escapeHtml(board.persistenceSummary)}</p>
           <p class="path-chip">${escapeHtml(board.dataFilePath)}</p>
         </article>
@@ -145,8 +145,20 @@ export function renderDashboard(
         </article>
 
         <article class="panel">
+          <p class="panel-tag">Security Boundary</p>
+          <h2>主窗口只保留显式声明的 Capability</h2>
+          <p class="panel-copy">${escapeHtml(board.securityBoundarySummary)}</p>
+        </article>
+
+        <article class="panel">
+          <p class="panel-tag">Release Readiness</p>
+          <h2>发布前先跑静态检查，而不是出包后补救</h2>
+          <p class="panel-copy">${escapeHtml(board.releaseReadinessSummary)}</p>
+        </article>
+
+        <article class="panel">
           <p class="panel-tag">Command Contract</p>
-          <h2>命令名和主返回结构继续保持稳定</h2>
+          <h2>只保留真正还在使用的 Todo 命令</h2>
           <ul class="chips">
             ${renderList(board.commandMap, "blue")}
           </ul>
@@ -163,11 +175,11 @@ export function renderDashboard(
         </article>
 
         <article class="card">
-          <p class="card-tag">Error Protocol</p>
-          <h3>错误不再是字符串碎片，而是前后端共享的边界协议</h3>
+          <p class="card-tag">Capability Strategy</p>
+          <h3>Capability 现在按职责拆分，而不是一把梭全部放进一个默认文件</h3>
           <p class="panel-copy">
-            这一课开始，前端接到的不是裸字符串，而是带 code、operation、suggestion
-            的结构化错误对象。这样 UI 可以给出更稳定、更可操作的反馈。
+            第 5 课把最小授权从原则变成工程做法：主窗口 Capability 显式列出 Todo command
+            权限，窗口状态插件也独立放在自己的 Capability 里。
           </p>
         </article>
       </section>
